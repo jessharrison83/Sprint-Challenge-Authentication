@@ -12,7 +12,7 @@ module.exports = {
 
 // implementation details
 function authenticate(req, res, next) {
-  const token = req.headers.authorization;
+  const token = req.get("Authorization");
 
   if (token) {
     jwt.verify(token, jwtKey, (err, decoded) => {
