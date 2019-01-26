@@ -33,10 +33,24 @@ function register(req, res) {
 }
 
 function login(req, res) {
-  // implement user login
+  const credentials = req.body;
+  db("users")
+    .where({ username: credentials.username })
+    .first()
+    .then(user => {
+      if (user && bcrypt.compareSync(credentials.password, user.password)) {
+        const token = generateToken(user);
+        res.status(200).json({ message: `Welcome ${user.username}`, token });
+      } else {
+        res.status(401).json({ message: "access denied" });
+      }
+    })
+    .catch(err => {
+      res.status(500).send(err);
+    });
 }
 
-function getJokes(req, res) {
+function getJokes(req, authenticate, res) {
   const requestOptions = {
     headers: { accept: "application/json" }
   };
